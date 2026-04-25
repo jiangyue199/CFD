@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: cfd-user-service
+  cloud:
+    nacos:
+      discovery:
+        enabled: false
+
+server:
+  port: 8085

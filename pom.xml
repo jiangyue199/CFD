@@ -26,6 +26,13 @@
         <module>cfd-order-service</module>
         <module>cfd-trading-service</module>
         <module>cfd-clearing-service</module>
+        <module>cfd-user-service</module>
+        <module>cfd-account-service</module>
+        <module>cfd-market-data-service</module>
+        <module>cfd-notification-service</module>
+        <module>cfd-reporting-service</module>
+        <module>cfd-config-service</module>
+        <module>cfd-backend-management-service</module>
     </modules>
 
     <dependencyManagement>

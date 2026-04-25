@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: cfd-notification-service
+  cloud:
+    nacos:
+      discovery:
+        enabled: false
+
+server:
+  port: 8088
