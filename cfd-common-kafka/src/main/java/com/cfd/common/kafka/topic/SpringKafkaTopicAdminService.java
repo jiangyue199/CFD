@@ -3,7 +3,7 @@ package com.cfd.common.kafka.topic;
 import java.util.Collection;
 
 import org.apache.kafka.clients.admin.NewTopic;
-import org.springframework.kafka.config.KafkaAdmin;
+import org.springframework.kafka.core.KafkaAdmin;
 
 public class SpringKafkaTopicAdminService implements TopicAdminService {
 

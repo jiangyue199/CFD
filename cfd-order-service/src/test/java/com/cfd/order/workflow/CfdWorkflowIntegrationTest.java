@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.math.BigDecimal;
-import java.time.Instant;
 import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
@@ -120,28 +119,9 @@ class CfdWorkflowIntegrationTest {
         assertEquals(expectedMargin, positionRepository.findByOrderId("order-001").orElseThrow().getMargin());
         assertEquals(expectedAvailable, accountRepository.findByUserId("demo-user").orElseThrow().getAvailable());
 
-        TradeOpenedEvent duplicateEvent = new TradeOpenedEvent(
-                "order-001",
-                "demo-user",
-                "BTCUSDT",
-                new BigDecimal("50000"),
-                BigDecimal.ONE,
-                new BigDecimal("10"),
-                expectedMargin,
-                BigDecimal.ZERO
-        );
-
-        KafkaEnvelope<TradeOpenedEvent> duplicateEnvelope = new KafkaEnvelope<>(
-                "duplicate-msg-id",
-                "TradeOpenedEvent",
-                "trading-service",
-                Instant.now(),
-                "order-001",
-                duplicateEvent
-        );
-        String duplicateJson = objectMapper.writeValueAsString(duplicateEnvelope);
-        broker.send(Topics.TRADE_OPENED_EVENT, "order-001", duplicateJson);
-        broker.send(Topics.TRADE_OPENED_EVENT, "order-001", duplicateJson);
+        String alreadyProcessedTradeEvent = broker.history(Topics.TRADE_OPENED_EVENT).get(0).payload();
+        broker.send(Topics.TRADE_OPENED_EVENT, "order-001", alreadyProcessedTradeEvent);
+        broker.send(Topics.TRADE_OPENED_EVENT, "order-001", alreadyProcessedTradeEvent);
 
         assertEquals(expectedAvailable, accountRepository.findByUserId("demo-user").orElseThrow().getAvailable());
     }
