@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: cfd-trading-service
+  cloud:
+    nacos:
+      discovery:
+        enabled: false
+
+cfd:
+  topic:
+    orderOpen: cfd.order.open.command
+
+server:
+  port: 8083

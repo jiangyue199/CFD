@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: cfd-order-service
+  cloud:
+    nacos:
+      discovery:
+        enabled: false
+
+services:
+  risk:
+    url: http://localhost:8081
+
+cfd:
+  topic:
+    orderOpen: cfd.order.open.command
+    tradeFeedback: cfd.trade.opened.feedback
+
+server:
+  port: 8082
