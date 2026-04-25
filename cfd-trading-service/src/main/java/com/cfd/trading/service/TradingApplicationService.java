@@ -12,7 +12,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.cfd.common.kafka.message.KafkaEnvelope;
 import com.cfd.common.kafka.outbox.OutboxMessage;
-import com.cfd.common.kafka.outbox.OutboxRepository;
+import com.cfd.common.kafka.outbox.RetryableOutboxRepository;
 import com.cfd.domain.kafka.Topics;
 import com.cfd.domain.model.OrderOpenCommand;
 import com.cfd.domain.model.TradeOpenedEvent;
@@ -24,11 +24,11 @@ import com.cfd.trading.domain.OpenPositionRepository;
 public class TradingApplicationService {
 
     private final OpenPositionRepository openPositionRepository;
-    private final OutboxRepository outboxRepository;
+    private final RetryableOutboxRepository outboxRepository;
     private final ObjectMapper objectMapper;
 
     public TradingApplicationService(OpenPositionRepository openPositionRepository,
-                                     OutboxRepository outboxRepository,
+                                     RetryableOutboxRepository outboxRepository,
                                      ObjectMapper objectMapper) {
         this.openPositionRepository = openPositionRepository;
         this.outboxRepository = outboxRepository;
@@ -70,30 +70,33 @@ public class TradingApplicationService {
 
         TradeOpenedFeedback feedback = new TradeOpenedFeedback(command.orderId(), "OPEN_SUCCESS");
 
-        outboxRepository.save(new OutboxMessage(
+        KafkaEnvelope<TradeOpenedEvent> tradeEventEnvelope = new KafkaEnvelope<>(
                 UUID.randomUUID().toString(),
+                "TradeOpenedEvent",
+                "trading-service",
+                Instant.now(),
+                command.orderId(),
+                tradeOpened);
+        KafkaEnvelope<TradeOpenedFeedback> feedbackEnvelope = new KafkaEnvelope<>(
+                UUID.randomUUID().toString(),
+                "TradeOpenedFeedback",
+                "trading-service",
+                Instant.now(),
+                command.orderId(),
+                feedback);
+
+        outboxRepository.save(new OutboxMessage(
+                tradeEventEnvelope.messageId(),
                 Topics.TRADE_OPENED_EVENT,
                 command.orderId(),
-                toJson(new KafkaEnvelope<>(
-                        UUID.randomUUID().toString(),
-                        "TradeOpenedEvent",
-                        "trading-service",
-                        Instant.now(),
-                        command.orderId(),
-                        tradeOpened)),
+                toJson(tradeEventEnvelope),
                 Instant.now()));
 
         outboxRepository.save(new OutboxMessage(
-                UUID.randomUUID().toString(),
+                feedbackEnvelope.messageId(),
                 Topics.TRADE_OPENED_FEEDBACK,
                 command.orderId(),
-                toJson(new KafkaEnvelope<>(
-                        UUID.randomUUID().toString(),
-                        "TradeOpenedFeedback",
-                        "trading-service",
-                        Instant.now(),
-                        command.orderId(),
-                        feedback)),
+                toJson(feedbackEnvelope),
                 Instant.now()));
     }
 

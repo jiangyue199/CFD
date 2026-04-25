@@ -2,6 +2,7 @@ package com.cfd.trading.domain;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class InMemoryOpenPositionRepository implements OpenPositionRepository {
@@ -16,5 +17,17 @@ public class InMemoryOpenPositionRepository implements OpenPositionRepository {
     @Override
     public Optional<OpenPosition> findByOrderId(String orderId) {
         return Optional.ofNullable(positions.get(orderId));
+    }
+
+    @Override
+    public List<OpenPosition> findByUserId(String userId) {
+        return positions.values().stream()
+                .filter(position -> position.getUserId().equals(userId))
+                .toList();
+    }
+
+    @Override
+    public int count() {
+        return positions.size();
     }
 }

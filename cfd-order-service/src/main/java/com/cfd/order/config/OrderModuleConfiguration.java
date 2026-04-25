@@ -3,9 +3,9 @@ package com.cfd.order.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.cfd.common.kafka.outbox.InMemoryOutboxRepository;
+import com.cfd.common.kafka.outbox.InMemoryAndRetryOutboxRepository;
 import com.cfd.common.kafka.outbox.OutboxRelayService;
-import com.cfd.common.kafka.outbox.OutboxRepository;
+import com.cfd.common.kafka.outbox.RetryableOutboxRepository;
 import com.cfd.common.kafka.producer.ReliableKafkaPublisher;
 import com.cfd.order.domain.InMemoryOrderRepository;
 import com.cfd.order.domain.OrderDomainService;
@@ -25,12 +25,12 @@ public class OrderModuleConfiguration {
     }
 
     @Bean
-    public OutboxRepository orderOutboxRepository() {
-        return new InMemoryOutboxRepository();
+    public RetryableOutboxRepository orderOutboxRepository() {
+        return new InMemoryAndRetryOutboxRepository();
     }
 
     @Bean
-    public OutboxRelayService orderOutboxRelayService(OutboxRepository orderOutboxRepository,
+    public OutboxRelayService orderOutboxRelayService(RetryableOutboxRepository orderOutboxRepository,
                                                       ReliableKafkaPublisher reliableKafkaPublisher) {
         return new OutboxRelayService(orderOutboxRepository, reliableKafkaPublisher);
     }

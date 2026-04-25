@@ -5,10 +5,18 @@ spring:
     nacos:
       discovery:
         enabled: false
+  task:
+    scheduling:
+      pool:
+        size: 1
 
 cfd:
   topic:
     orderOpen: cfd.order.open.command
+  outbox:
+    relay:
+      fixed-delay-ms: 500
+      batch-size: 200
 
 server:
   port: 8083

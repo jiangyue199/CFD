@@ -1,12 +1,14 @@
 package com.cfd.clearing.service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cfd.clearing.domain.AccountBalance;
 import com.cfd.clearing.domain.AccountRepository;
+import com.cfd.domain.model.AccountBalanceResponse;
 import com.cfd.domain.model.TradeOpenedEvent;
 
 @Service
@@ -29,5 +31,14 @@ public class ClearingApplicationService {
 
         account.debitMargin(event.margin());
         accountRepository.update(account);
+    }
+
+    public AccountBalanceResponse queryAccount(String userId) {
+        AccountBalance account = accountRepository.findByUserId(userId)
+                .orElseGet(() -> accountRepository.saveIfAbsent(new AccountBalance(userId, new BigDecimal("100000.00000000"), BigDecimal.ZERO)));
+        return new AccountBalanceResponse(
+                account.getUserId(),
+                account.getAvailable().setScale(8, RoundingMode.HALF_UP),
+                account.getFrozenMargin().setScale(8, RoundingMode.HALF_UP));
     }
 }

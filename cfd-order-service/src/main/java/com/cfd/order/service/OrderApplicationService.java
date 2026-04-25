@@ -21,6 +21,7 @@ import com.cfd.domain.model.TradeOpenedFeedback;
 import com.cfd.order.client.RiskFeignClient;
 import com.cfd.order.domain.OrderAggregate;
 import com.cfd.order.domain.OrderDomainService;
+import com.cfd.order.domain.OrderMapper;
 import com.cfd.order.domain.OrderRepository;
 
 @Service
@@ -45,10 +46,10 @@ public class OrderApplicationService {
     }
 
     @Transactional
-    public synchronized OrderAggregate submitOpenOrder(OrderOpenRequest request) {
+    public synchronized com.cfd.domain.model.OrderResponse submitOpenOrder(OrderOpenRequest request) {
         Optional<OrderAggregate> existing = orderRepository.findById(request.orderId());
         if (existing.isPresent()) {
-            return existing.get();
+            return OrderMapper.toResponse(existing.get());
         }
 
         OrderAggregate order = orderDomainService.createPendingOrder(request.orderId(), request.userId(), request.symbol());
@@ -59,7 +60,7 @@ public class OrderApplicationService {
         if (!risk.allowed()) {
             orderDomainService.markRiskRejected(order);
             orderRepository.update(order);
-            return order;
+            return OrderMapper.toResponse(order);
         }
 
         OrderOpenCommand command = new OrderOpenCommand(
@@ -84,15 +85,24 @@ public class OrderApplicationService {
 
         orderDomainService.markSentToTrading(order);
         orderRepository.update(order);
-        return order;
+        return OrderMapper.toResponse(order);
     }
 
     @Transactional
     public synchronized void onTradeOpened(TradeOpenedFeedback feedback) {
         orderRepository.findById(feedback.orderId()).ifPresent(order -> {
+            if (orderDomainService.isFinalState(order.getStatus())) {
+                return;
+            }
             orderDomainService.markOpened(order);
             orderRepository.update(order);
         });
+    }
+
+    public com.cfd.domain.model.OrderResponse getOrder(String orderId) {
+        OrderAggregate order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new IllegalArgumentException("Order not found: " + orderId));
+        return OrderMapper.toResponse(order);
     }
 
     private String toJson(Object value) {

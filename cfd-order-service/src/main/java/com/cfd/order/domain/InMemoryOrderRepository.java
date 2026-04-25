@@ -1,5 +1,6 @@
 package com.cfd.order.domain;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -16,6 +17,13 @@ public class InMemoryOrderRepository implements OrderRepository {
     @Override
     public Optional<OrderAggregate> findById(String orderId) {
         return Optional.ofNullable(orders.get(orderId));
+    }
+
+    @Override
+    public List<OrderAggregate> findAllByUserId(String userId) {
+        return orders.values().stream()
+                .filter(order -> order.getUserId().equals(userId))
+                .toList();
     }
 
     @Override

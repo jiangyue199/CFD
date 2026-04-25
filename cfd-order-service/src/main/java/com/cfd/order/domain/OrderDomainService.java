@@ -19,4 +19,8 @@ public class OrderDomainService {
     public void markOpened(OrderAggregate order) {
         order.setStatus(OrderStatus.OPENED);
     }
+
+    public boolean isFinalState(OrderStatus status) {
+        return status == OrderStatus.OPENED || status == OrderStatus.RISK_REJECTED;
+    }
 }

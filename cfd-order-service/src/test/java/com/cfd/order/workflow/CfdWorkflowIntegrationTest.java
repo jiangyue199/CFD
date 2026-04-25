@@ -8,19 +8,21 @@ import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
 
+import com.cfd.clearing.domain.AccountBalance;
 import com.cfd.clearing.domain.AccountRepository;
 import com.cfd.clearing.domain.InMemoryAccountRepository;
 import com.cfd.clearing.service.ClearingApplicationService;
 import com.cfd.common.kafka.idempotent.IdempotentConsumerExecutor;
 import com.cfd.common.kafka.idempotent.InMemoryConsumerDedupStore;
 import com.cfd.common.kafka.message.KafkaEnvelope;
-import com.cfd.common.kafka.outbox.InMemoryOutboxRepository;
+import com.cfd.common.kafka.outbox.InMemoryAndRetryOutboxRepository;
 import com.cfd.common.kafka.outbox.OutboxRelayService;
 import com.cfd.common.kafka.producer.InMemoryReliablePublisher;
 import com.cfd.common.kafka.test.InMemoryKafkaBroker;
 import com.cfd.domain.kafka.Topics;
 import com.cfd.domain.model.OrderOpenCommand;
 import com.cfd.domain.model.OrderOpenRequest;
+import com.cfd.domain.model.OrderResponse;
 import com.cfd.domain.model.OrderStatus;
 import com.cfd.domain.model.RiskCheckResponse;
 import com.cfd.domain.model.TradeOpenedEvent;
@@ -48,7 +50,7 @@ class CfdWorkflowIntegrationTest {
         IdempotentConsumerExecutor idempotentExecutor = new IdempotentConsumerExecutor(new InMemoryConsumerDedupStore());
 
         InMemoryOrderRepository orderRepository = new InMemoryOrderRepository();
-        InMemoryOutboxRepository orderOutbox = new InMemoryOutboxRepository();
+        InMemoryAndRetryOutboxRepository orderOutbox = new InMemoryAndRetryOutboxRepository();
         OutboxRelayService orderRelay = new OutboxRelayService(orderOutbox, new InMemoryReliablePublisher(broker));
 
         RiskFeignClient riskFeignClient = request -> new RiskCheckResponse(true, "PASS");
@@ -60,12 +62,12 @@ class CfdWorkflowIntegrationTest {
                 objectMapper);
 
         InMemoryOpenPositionRepository positionRepository = new InMemoryOpenPositionRepository();
-        InMemoryOutboxRepository tradingOutbox = new InMemoryOutboxRepository();
+        InMemoryAndRetryOutboxRepository tradingOutbox = new InMemoryAndRetryOutboxRepository();
         OutboxRelayService tradingRelay = new OutboxRelayService(tradingOutbox, new InMemoryReliablePublisher(broker));
         TradingApplicationService tradingService = new TradingApplicationService(positionRepository, tradingOutbox, objectMapper);
 
         AccountRepository accountRepository = new InMemoryAccountRepository();
-        accountRepository.saveIfAbsent(new com.cfd.clearing.domain.AccountBalance("demo-user", new BigDecimal("100000.00000000"), BigDecimal.ZERO));
+        accountRepository.saveIfAbsent(new AccountBalance("demo-user", new BigDecimal("100000.00000000"), BigDecimal.ZERO));
         ClearingApplicationService clearingService = new ClearingApplicationService(accountRepository);
 
         JavaType orderCommandType = objectMapper.getTypeFactory().constructParametricType(KafkaEnvelope.class, OrderOpenCommand.class);
@@ -99,7 +101,7 @@ class CfdWorkflowIntegrationTest {
             }
         });
 
-        orderService.submitOpenOrder(new OrderOpenRequest(
+        OrderResponse firstSubmit = orderService.submitOpenOrder(new OrderOpenRequest(
                 "order-001",
                 "demo-user",
                 "BTCUSDT",
@@ -107,6 +109,18 @@ class CfdWorkflowIntegrationTest {
                 new BigDecimal("1"),
                 new BigDecimal("10")
         ));
+        assertEquals(OrderStatus.SENT_TO_TRADING, firstSubmit.status());
+
+        // same order id should return current aggregate and avoid duplicate command publishing
+        OrderResponse secondSubmit = orderService.submitOpenOrder(new OrderOpenRequest(
+                "order-001",
+                "demo-user",
+                "BTCUSDT",
+                new BigDecimal("50000"),
+                new BigDecimal("1"),
+                new BigDecimal("10")
+        ));
+        assertEquals("order-001", secondSubmit.orderId());
 
         orderRelay.flushPending(10);
         tradingRelay.flushPending(10);
@@ -129,7 +143,7 @@ class CfdWorkflowIntegrationTest {
     @Test
     void shouldRejectOrderWhenRiskCheckFails() {
         InMemoryOrderRepository orderRepository = new InMemoryOrderRepository();
-        InMemoryOutboxRepository orderOutbox = new InMemoryOutboxRepository();
+        InMemoryAndRetryOutboxRepository orderOutbox = new InMemoryAndRetryOutboxRepository();
 
         RiskFeignClient riskFeignClient = request -> new RiskCheckResponse(false, "Leverage exceeds threshold");
         OrderApplicationService orderService = new OrderApplicationService(
@@ -140,7 +154,7 @@ class CfdWorkflowIntegrationTest {
                 objectMapper);
 
         String orderId = UUID.randomUUID().toString();
-        orderService.submitOpenOrder(new OrderOpenRequest(
+        OrderResponse response = orderService.submitOpenOrder(new OrderOpenRequest(
                 orderId,
                 "user-2",
                 "ETHUSDT",
@@ -149,6 +163,7 @@ class CfdWorkflowIntegrationTest {
                 new BigDecimal("100")
         ));
 
+        assertEquals(orderId, response.orderId());
         assertEquals(OrderStatus.RISK_REJECTED, orderRepository.findById(orderId).orElseThrow().getStatus());
     }
 }

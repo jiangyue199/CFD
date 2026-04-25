@@ -4,12 +4,24 @@ import com.cfd.common.kafka.producer.ReliableKafkaPublisher;
 
 public class OutboxRelayService {
 
-    private final OutboxRepository outboxRepository;
+    private final RetryableOutboxRepository outboxRepository;
     private final ReliableKafkaPublisher reliableKafkaPublisher;
+    private final int defaultBatchSize;
 
-    public OutboxRelayService(OutboxRepository outboxRepository, ReliableKafkaPublisher reliableKafkaPublisher) {
+    public OutboxRelayService(RetryableOutboxRepository outboxRepository, ReliableKafkaPublisher reliableKafkaPublisher) {
+        this(outboxRepository, reliableKafkaPublisher, 200);
+    }
+
+    public OutboxRelayService(RetryableOutboxRepository outboxRepository,
+                              ReliableKafkaPublisher reliableKafkaPublisher,
+                              int defaultBatchSize) {
         this.outboxRepository = outboxRepository;
         this.reliableKafkaPublisher = reliableKafkaPublisher;
+        this.defaultBatchSize = defaultBatchSize;
+    }
+
+    public int flushDefaultBatch() {
+        return flushPending(defaultBatchSize);
     }
 
     public int flushPending(int maxBatch) {

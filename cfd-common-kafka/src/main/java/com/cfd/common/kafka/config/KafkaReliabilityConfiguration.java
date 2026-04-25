@@ -2,6 +2,7 @@ package com.cfd.common.kafka.config;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.time.Duration;
 
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
@@ -14,7 +15,7 @@ import org.springframework.kafka.core.ProducerFactory;
 
 import com.cfd.common.kafka.idempotent.ConsumerDedupStore;
 import com.cfd.common.kafka.idempotent.IdempotentConsumerExecutor;
-import com.cfd.common.kafka.idempotent.InMemoryConsumerDedupStore;
+import com.cfd.common.kafka.idempotent.InMemoryAndExpiryConsumerDedupStore;
 import com.cfd.common.kafka.producer.ReliableKafkaPublisher;
 import com.cfd.common.kafka.producer.SpringKafkaReliablePublisher;
 
@@ -24,7 +25,7 @@ public class KafkaReliabilityConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public ConsumerDedupStore consumerDedupStore() {
-        return new InMemoryConsumerDedupStore();
+        return new InMemoryAndExpiryConsumerDedupStore(Duration.ofHours(24));
     }
 
     @Bean

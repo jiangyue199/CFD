@@ -11,6 +11,7 @@ public class OrderAggregate {
     private final String symbol;
     private final Instant createdAt;
     private OrderStatus status;
+    private String statusReason;
 
     public OrderAggregate(String orderId, String userId, String symbol, OrderStatus status) {
         this.orderId = orderId;
@@ -42,5 +43,17 @@ public class OrderAggregate {
 
     public void setStatus(OrderStatus status) {
         this.status = status;
+    }
+
+    public String getStatusReason() {
+        return statusReason;
+    }
+
+    public void setStatusReason(String statusReason) {
+        this.statusReason = statusReason;
+    }
+
+    public boolean isOpened() {
+        return this.status == OrderStatus.OPENED;
     }
 }

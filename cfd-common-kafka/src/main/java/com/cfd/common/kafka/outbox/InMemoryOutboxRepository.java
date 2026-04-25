@@ -38,4 +38,8 @@ public class InMemoryOutboxRepository implements OutboxRepository {
             message.markFailed(error);
         }
     }
+
+    protected Map<String, OutboxMessage> internalStore() {
+        return messages;
+    }
 }

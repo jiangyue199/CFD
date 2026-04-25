@@ -3,6 +3,8 @@ package com.cfd.trading.domain;
 import java.math.BigDecimal;
 import java.time.Instant;
 
+import com.cfd.domain.model.PositionStatus;
+
 public class OpenPosition {
 
     private final String orderId;
@@ -14,6 +16,7 @@ public class OpenPosition {
     private final BigDecimal margin;
     private final BigDecimal floatingPnl;
     private final Instant createdAt;
+    private PositionStatus status;
 
     public OpenPosition(String orderId,
                         String userId,
@@ -32,6 +35,7 @@ public class OpenPosition {
         this.margin = margin;
         this.floatingPnl = floatingPnl;
         this.createdAt = Instant.now();
+        this.status = PositionStatus.OPENED;
     }
 
     public String getOrderId() {
@@ -68,5 +72,13 @@ public class OpenPosition {
 
     public Instant getCreatedAt() {
         return createdAt;
+    }
+
+    public PositionStatus getStatus() {
+        return status;
+    }
+
+    public void close() {
+        this.status = PositionStatus.CLOSED;
     }
 }

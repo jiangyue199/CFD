@@ -11,10 +11,16 @@ public class IdempotentConsumerExecutor {
     }
 
     public <T> boolean execute(String consumerGroup, String messageId, T payload, Consumer<T> consumer) {
-        if (!dedupStore.markIfNew(consumerGroup, messageId)) {
+        if (!dedupStore.tryStartProcessing(consumerGroup, messageId)) {
             return false;
         }
-        consumer.accept(payload);
-        return true;
+        try {
+            consumer.accept(payload);
+            dedupStore.markProcessed(consumerGroup, messageId);
+            return true;
+        } catch (RuntimeException ex) {
+            dedupStore.clearProcessing(consumerGroup, messageId);
+            throw ex;
+        }
     }
 }
