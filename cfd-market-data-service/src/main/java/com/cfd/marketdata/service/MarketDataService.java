@@ -2,24 +2,60 @@ package com.cfd.marketdata.service;
 
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.stereotype.Service;
+
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.cfd.marketdata.persistence.MarketQuoteDbMapper;
+import com.cfd.marketdata.persistence.MarketQuoteEntity;
 
 @Service
 public class MarketDataService {
 
-    private final Map<String, Quote> latestQuotes = new ConcurrentHashMap<>();
+    private final MarketQuoteDbMapper marketQuoteDbMapper;
+
+    public MarketDataService(MarketQuoteDbMapper marketQuoteDbMapper) {
+        this.marketQuoteDbMapper = marketQuoteDbMapper;
+    }
 
     public Quote update(String symbol, BigDecimal bid, BigDecimal ask) {
-        Quote quote = new Quote(symbol, bid, ask, Instant.now());
-        latestQuotes.put(symbol, quote);
-        return quote;
+        Instant now = Instant.now();
+        MarketQuoteEntity existing = marketQuoteDbMapper.selectOne(new LambdaQueryWrapper<MarketQuoteEntity>()
+                .eq(MarketQuoteEntity::getSymbol, symbol)
+                .last("LIMIT 1"));
+        if (existing == null) {
+            existing = new MarketQuoteEntity();
+            existing.setSymbol(symbol);
+            existing.setBid(bid);
+            existing.setAsk(ask);
+            existing.setQuoteTime(now);
+            marketQuoteDbMapper.insert(existing);
+        } else {
+            existing.setBid(bid);
+            existing.setAsk(ask);
+            existing.setQuoteTime(now);
+            marketQuoteDbMapper.updateById(existing);
+        }
+        return toQuote(existing);
     }
 
     public Quote latest(String symbol) {
-        return latestQuotes.computeIfAbsent(symbol, key -> new Quote(key, BigDecimal.ZERO, BigDecimal.ZERO, Instant.now()));
+        MarketQuoteEntity quote = marketQuoteDbMapper.selectOne(new LambdaQueryWrapper<MarketQuoteEntity>()
+                .eq(MarketQuoteEntity::getSymbol, symbol)
+                .last("LIMIT 1"));
+        if (quote == null) {
+            quote = new MarketQuoteEntity();
+            quote.setSymbol(symbol);
+            quote.setBid(BigDecimal.ZERO);
+            quote.setAsk(BigDecimal.ZERO);
+            quote.setQuoteTime(Instant.now());
+            marketQuoteDbMapper.insert(quote);
+        }
+        return toQuote(quote);
+    }
+
+    private Quote toQuote(MarketQuoteEntity entity) {
+        return new Quote(entity.getSymbol(), entity.getBid(), entity.getAsk(), entity.getQuoteTime());
     }
 
     public record Quote(String symbol, BigDecimal bid, BigDecimal ask, Instant timestamp) {}

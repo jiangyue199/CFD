@@ -6,11 +6,13 @@ public class AccountCurrencyBalance {
 
     private final String userId;
     private final String currency;
+    private final String pk;
     private BigDecimal available;
 
     public AccountCurrencyBalance(String userId, String currency, BigDecimal available) {
         this.userId = userId;
         this.currency = currency;
+        this.pk = userId + ":" + currency;
         this.available = available;
     }
 
@@ -20,6 +22,10 @@ public class AccountCurrencyBalance {
 
     public String getCurrency() {
         return currency;
+    }
+
+    public String getPk() {
+        return pk;
     }
 
     public BigDecimal getAvailable() {

@@ -20,6 +20,29 @@ public class UserProfile {
         this.createdAt = Instant.now();
     }
 
+    public static UserProfile restore(String userId,
+                                      String username,
+                                      String email,
+                                      String phone,
+                                      boolean kycPassed,
+                                      Instant createdAt) {
+        return new UserProfile(userId, username, email, phone, kycPassed, createdAt);
+    }
+
+    private UserProfile(String userId,
+                        String username,
+                        String email,
+                        String phone,
+                        boolean kycPassed,
+                        Instant createdAt) {
+        this.userId = userId;
+        this.username = username;
+        this.email = email;
+        this.phone = phone;
+        this.kycPassed = kycPassed;
+        this.createdAt = createdAt;
+    }
+
     public String getUserId() {
         return userId;
     }

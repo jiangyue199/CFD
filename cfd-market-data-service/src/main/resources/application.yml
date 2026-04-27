@@ -5,6 +5,18 @@ spring:
     nacos:
       discovery:
         enabled: false
+  datasource:
+    url: ${MYSQL_URL:jdbc:mysql://localhost:3306/cfd_market_data?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC}
+    username: ${MYSQL_USERNAME:root}
+    password: ${MYSQL_PASSWORD:root}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:schema.sql
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
 
 server:
   port: 8087

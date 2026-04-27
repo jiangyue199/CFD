@@ -38,6 +38,22 @@ public class OpenPosition {
         this.status = PositionStatus.OPENED;
     }
 
+    public static OpenPosition restore(String orderId,
+                                       String userId,
+                                       String symbol,
+                                       BigDecimal openPrice,
+                                       BigDecimal quantity,
+                                       BigDecimal leverage,
+                                       BigDecimal margin,
+                                       BigDecimal floatingPnl,
+                                       Instant createdAt,
+                                       PositionStatus status) {
+        OpenPosition position = new OpenPosition(orderId, userId, symbol, openPrice, quantity, leverage, margin, floatingPnl);
+        position.status = status;
+        position.createdAtOverride(createdAt);
+        return position;
+    }
+
     public String getOrderId() {
         return orderId;
     }
@@ -80,5 +96,15 @@ public class OpenPosition {
 
     public void close() {
         this.status = PositionStatus.CLOSED;
+    }
+
+    private void createdAtOverride(Instant createdAt) {
+        try {
+            java.lang.reflect.Field field = OpenPosition.class.getDeclaredField("createdAt");
+            field.setAccessible(true);
+            field.set(this, createdAt);
+        } catch (ReflectiveOperationException ex) {
+            throw new IllegalStateException("Failed to restore open position createdAt", ex);
+        }
     }
 }

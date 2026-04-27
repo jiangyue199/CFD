@@ -21,6 +21,20 @@ public class OrderAggregate {
         this.createdAt = Instant.now();
     }
 
+    public OrderAggregate(String orderId,
+                          String userId,
+                          String symbol,
+                          OrderStatus status,
+                          String statusReason,
+                          Instant createdAt) {
+        this.orderId = orderId;
+        this.userId = userId;
+        this.symbol = symbol;
+        this.status = status;
+        this.statusReason = statusReason;
+        this.createdAt = createdAt;
+    }
+
     public String getOrderId() {
         return orderId;
     }

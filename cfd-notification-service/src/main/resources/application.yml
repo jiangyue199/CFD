@@ -5,6 +5,18 @@ spring:
     nacos:
       discovery:
         enabled: false
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${MYSQL_URL:jdbc:mysql://localhost:3306/cfd_notification?useUnicode=true&characterEncoding=utf8&serverTimezone=UTC&allowPublicKeyRetrieval=true&useSSL=false}
+    username: ${MYSQL_USERNAME:root}
+    password: ${MYSQL_PASSWORD:root}
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:schema.sql
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
 
 server:
   port: 8088

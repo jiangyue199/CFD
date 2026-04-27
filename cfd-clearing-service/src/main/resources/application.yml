@@ -5,6 +5,19 @@ spring:
     nacos:
       discovery:
         enabled: false
+  datasource:
+    url: ${DB_URL:jdbc:mysql://127.0.0.1:3306/cfd_clearing?useUnicode=true&characterEncoding=utf8&serverTimezone=UTC&allowPublicKeyRetrieval=true&useSSL=false}
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:root}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:schema.sql
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
 
 cfd:
   topic:

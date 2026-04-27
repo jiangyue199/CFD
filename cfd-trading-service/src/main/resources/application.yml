@@ -9,6 +9,20 @@ spring:
     scheduling:
       pool:
         size: 1
+  datasource:
+    url: ${CFD_DB_URL:jdbc:mysql://localhost:3306/cfd_trading?useUnicode=true&characterEncoding=utf8&serverTimezone=UTC}
+    username: ${CFD_DB_USERNAME:root}
+    password: ${CFD_DB_PASSWORD:root}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:schema.sql
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
 cfd:
   topic:

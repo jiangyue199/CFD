@@ -5,6 +5,15 @@ spring:
     nacos:
       discovery:
         enabled: false
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${CFD_DB_URL:jdbc:mysql://localhost:3306/cfd_risk?useUnicode=true&characterEncoding=utf8&serverTimezone=UTC&allowPublicKeyRetrieval=true&useSSL=false}
+    username: ${CFD_DB_USERNAME:root}
+    password: ${CFD_DB_PASSWORD:root}
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:schema.sql
 
 server:
   port: 8081
