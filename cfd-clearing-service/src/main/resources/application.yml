@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: cfd-clearing-service
+  cloud:
+    nacos:
+      discovery:
+        enabled: false
+
+cfd:
+  topic:
+    tradeOpened: cfd.trade.opened.event
+
+server:
+  port: 8084

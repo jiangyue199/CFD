@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: cfd-backend-management-service
+  cloud:
+    nacos:
+      discovery:
+        enabled: false
+
+server:
+  port: 8091

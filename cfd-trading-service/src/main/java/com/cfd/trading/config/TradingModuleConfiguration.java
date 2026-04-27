@@ -1,0 +1,31 @@
+package com.cfd.trading.config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+import com.cfd.common.kafka.outbox.InMemoryAndRetryOutboxRepository;
+import com.cfd.common.kafka.outbox.OutboxRelayService;
+import com.cfd.common.kafka.outbox.RetryableOutboxRepository;
+import com.cfd.common.kafka.producer.ReliableKafkaPublisher;
+import com.cfd.trading.domain.InMemoryOpenPositionRepository;
+import com.cfd.trading.domain.OpenPositionRepository;
+
+@Configuration
+public class TradingModuleConfiguration {
+
+    @Bean
+    public OpenPositionRepository openPositionRepository() {
+        return new InMemoryOpenPositionRepository();
+    }
+
+    @Bean
+    public RetryableOutboxRepository tradingOutboxRepository() {
+        return new InMemoryAndRetryOutboxRepository();
+    }
+
+    @Bean
+    public OutboxRelayService tradingOutboxRelayService(RetryableOutboxRepository tradingOutboxRepository,
+                                                        ReliableKafkaPublisher reliableKafkaPublisher) {
+        return new OutboxRelayService(tradingOutboxRepository, reliableKafkaPublisher);
+    }
+}
