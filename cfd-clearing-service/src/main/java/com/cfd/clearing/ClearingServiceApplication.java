@@ -9,7 +9,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @SpringBootApplication(scanBasePackages = {"com.cfd.clearing", "com.cfd.common.kafka"})
 @EnableDiscoveryClient
 @EnableScheduling
-@MapperScan({"com.cfd.clearing.persistence"})
+@MapperScan({"com.cfd.clearing.persistence", "com.cfd.common.kafka.outbox.persistence"})
 public class ClearingServiceApplication {
 
     public static void main(String[] args) {

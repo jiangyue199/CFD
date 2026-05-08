@@ -11,7 +11,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableDiscoveryClient
 @EnableFeignClients
 @EnableScheduling
-@MapperScan("com.cfd")
+@MapperScan({"com.cfd.order.persistence", "com.cfd.common.kafka.outbox.persistence"})
 public class OrderServiceApplication {
 
     public static void main(String[] args) {

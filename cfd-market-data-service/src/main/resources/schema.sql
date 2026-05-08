@@ -1,0 +1,6 @@
+CREATE TABLE IF NOT EXISTS market_quote (
+    symbol VARCHAR(32) NOT NULL PRIMARY KEY,
+    bid DECIMAL(20, 8),
+    ask DECIMAL(20, 8),
+    quote_time TIMESTAMP(6) DEFAULT CURRENT_TIMESTAMP(6)
+);

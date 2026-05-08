@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS notification_message (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id VARCHAR(64) NOT NULL,
+    channel VARCHAR(32),
+    message TEXT,
+    sent_at TIMESTAMP(6) DEFAULT CURRENT_TIMESTAMP(6)
+);
