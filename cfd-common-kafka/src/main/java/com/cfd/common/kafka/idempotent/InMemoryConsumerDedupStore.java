@@ -3,6 +3,17 @@ package com.cfd.common.kafka.idempotent;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * 基于内存的简单消费者去重存储（无过期机制）。
+ *
+ * <p>分别维护"处理中"和"已处理"两个集合，精确区分消息状态。
+ * 由于不带 TTL 过期清理，长期运行时内存会持续增长，因此仅适用于
+ * 单元测试和短时运行的集成测试场景。
+ *
+ * @author CFD Platform Team
+ * @see ConsumerDedupStore
+ * @see InMemoryAndExpiryConsumerDedupStore
+ */
 public class InMemoryConsumerDedupStore implements ConsumerDedupStore {
 
     private final ConcurrentHashMap<String, Set<String>> processedByGroup = new ConcurrentHashMap<>();

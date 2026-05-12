@@ -19,21 +19,66 @@ import com.cfd.common.kafka.idempotent.InMemoryAndExpiryConsumerDedupStore;
 import com.cfd.common.kafka.producer.ReliableKafkaPublisher;
 import com.cfd.common.kafka.producer.SpringKafkaReliablePublisher;
 
+/**
+ * Kafka 可靠性自动配置类。
+ *
+ * <p>作为 Spring 自动配置入口，统一注册 Kafka 可靠发布与幂等消费所需的核心 Bean：
+ * <ul>
+ *     <li>{@link ConsumerDedupStore} — 消费者去重存储（默认基于内存 + TTL 过期策略）</li>
+ *     <li>{@link IdempotentConsumerExecutor} — 幂等消费执行器</li>
+ *     <li>{@link org.springframework.kafka.core.ProducerFactory} — 生产者工厂（acks=all、开启幂等性）</li>
+ *     <li>{@link org.springframework.kafka.core.KafkaTemplate} — Kafka 发送模板</li>
+ *     <li>{@link ReliableKafkaPublisher} — 可靠消息发布器</li>
+ * </ul>
+ *
+ * <p>所有 Bean 均标注 {@link ConditionalOnMissingBean}，应用可自行覆盖任一实现。
+ *
+ * @author CFD Platform Team
+ * @see ReliableKafkaPublisher
+ * @see IdempotentConsumerExecutor
+ */
 @Configuration
 public class KafkaReliabilityConfiguration {
 
+    /**
+     * 注册默认的消费者去重存储。
+     *
+     * <p>使用 {@link InMemoryAndExpiryConsumerDedupStore}，TTL 默认 24 小时。
+     *
+     * @return 消费者去重存储实例
+     */
     @Bean
     @ConditionalOnMissingBean
     public ConsumerDedupStore consumerDedupStore() {
         return new InMemoryAndExpiryConsumerDedupStore(Duration.ofHours(24));
     }
 
+    /**
+     * 注册幂等消费执行器。
+     *
+     * @param dedupStore 消费者去重存储
+     * @return 幂等消费执行器实例
+     */
     @Bean
     @ConditionalOnMissingBean
     public IdempotentConsumerExecutor idempotentConsumerExecutor(ConsumerDedupStore dedupStore) {
         return new IdempotentConsumerExecutor(dedupStore);
     }
 
+    /**
+     * 注册 Kafka 生产者工厂。
+     *
+     * <p>关键配置：
+     * <ul>
+     *     <li>{@code acks=all} — 所有副本确认后才算写入成功</li>
+     *     <li>{@code enable.idempotence=true} — 开启生产者幂等性，防止网络重试导致重复</li>
+     *     <li>{@code retries=Integer.MAX_VALUE} — 配合幂等性，持续重试直到成功或超时</li>
+     *     <li>{@code max.in.flight.requests.per.connection=5} — 幂等性允许的最大并行请求数</li>
+     * </ul>
+     *
+     * @param bootstrapServers Kafka 集群地址，默认 {@code localhost:9092}
+     * @return 生产者工厂实例
+     */
     @Bean
     @ConditionalOnMissingBean
     public ProducerFactory<String, String> producerFactory(
@@ -51,12 +96,26 @@ public class KafkaReliabilityConfiguration {
         return new DefaultKafkaProducerFactory<>(properties);
     }
 
+    /**
+     * 注册 KafkaTemplate。
+     *
+     * @param producerFactory 生产者工厂
+     * @return KafkaTemplate 实例
+     */
     @Bean
     @ConditionalOnMissingBean
     public KafkaTemplate<String, String> kafkaTemplate(ProducerFactory<String, String> producerFactory) {
         return new KafkaTemplate<>(producerFactory);
     }
 
+    /**
+     * 注册可靠消息发布器。
+     *
+     * <p>默认使用 {@link SpringKafkaReliablePublisher}，基于 {@link KafkaTemplate} 同步发送。
+     *
+     * @param kafkaTemplate Kafka 发送模板
+     * @return 可靠消息发布器实例
+     */
     @Bean
     @ConditionalOnMissingBean
     public ReliableKafkaPublisher reliableKafkaPublisher(KafkaTemplate<String, String> kafkaTemplate) {
