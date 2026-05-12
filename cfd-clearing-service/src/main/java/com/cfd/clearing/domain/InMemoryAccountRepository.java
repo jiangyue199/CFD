@@ -4,6 +4,14 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * 基于内存的账户仓储实现。
+ *
+ * <p>使用{@link ConcurrentHashMap}存储账户余额数据，主要用于单元测试场景。
+ * 线程安全，支持并发访问。</p>
+ *
+ * @author CFD Platform Team
+ */
 public class InMemoryAccountRepository implements AccountRepository {
 
     private final Map<String, AccountBalance> balances = new ConcurrentHashMap<>();

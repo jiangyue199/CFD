@@ -8,6 +8,15 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
+/**
+ * 持仓数据库实体类。
+ *
+ * <p>对应数据库表{@code t_open_position}，使用MyBatis-Plus进行ORM映射。
+ * 包含订单ID、用户ID、交易品种、开仓价格、数量、杠杆、保证金、浮动盈亏、
+ * 状态及创建时间等字段。</p>
+ *
+ * @author CFD Platform Team
+ */
 @TableName("t_open_position")
 public class OpenPositionEntity {
 

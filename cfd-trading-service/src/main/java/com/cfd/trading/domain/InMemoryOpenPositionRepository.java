@@ -5,6 +5,14 @@ import java.util.Optional;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * 基于内存的持仓仓储实现。
+ *
+ * <p>使用{@link ConcurrentHashMap}存储持仓数据，主要用于单元测试场景。
+ * 线程安全，支持并发访问。</p>
+ *
+ * @author CFD Platform Team
+ */
 public class InMemoryOpenPositionRepository implements OpenPositionRepository {
 
     private final Map<String, OpenPosition> positions = new ConcurrentHashMap<>();

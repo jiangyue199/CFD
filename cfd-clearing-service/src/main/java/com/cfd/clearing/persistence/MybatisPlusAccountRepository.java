@@ -7,6 +7,14 @@ import org.springframework.stereotype.Repository;
 import com.cfd.clearing.domain.AccountBalance;
 import com.cfd.clearing.domain.AccountRepository;
 
+/**
+ * 基于MyBatis-Plus的账户仓储实现。
+ *
+ * <p>使用MySQL数据库持久化账户余额数据，实现{@link AccountRepository}接口。
+ * 提供幂等保存、按用户ID查询及更新功能。</p>
+ *
+ * @author CFD Platform Team
+ */
 @Repository
 public class MybatisPlusAccountRepository implements AccountRepository {
 

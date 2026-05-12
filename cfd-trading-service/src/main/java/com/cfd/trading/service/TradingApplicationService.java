@@ -20,6 +20,14 @@ import com.cfd.domain.model.TradeOpenedFeedback;
 import com.cfd.trading.domain.OpenPosition;
 import com.cfd.trading.domain.OpenPositionRepository;
 
+/**
+ * 交易应用服务。
+ *
+ * <p>处理开仓指令的核心业务逻辑：创建持仓、计算保证金（开仓价格×数量÷杠杆），
+ * 并通过Outbox模式可靠发布{@code TradeOpenedEvent}和{@code TradeOpenedFeedback}消息。</p>
+ *
+ * @author CFD Platform Team
+ */
 @Service
 public class TradingApplicationService {
 
@@ -35,6 +43,21 @@ public class TradingApplicationService {
         this.objectMapper = objectMapper;
     }
 
+    /**
+     * 处理开仓指令。
+     *
+     * <p>执行以下步骤：
+     * <ol>
+     *   <li>幂等性检查：若订单已存在则直接返回</li>
+     *   <li>计算保证金：开仓价格 × 数量 ÷ 杠杆</li>
+     *   <li>创建并保存持仓对象</li>
+     *   <li>写入Outbox：TradeOpenedEvent（通知清算服务）</li>
+     *   <li>写入Outbox：TradeOpenedFeedback（反馈订单服务）</li>
+     * </ol>
+     * </p>
+     *
+     * @param command 开仓指令
+     */
     @Transactional
     public synchronized void handleOrderOpen(OrderOpenCommand command) {
         if (openPositionRepository.findByOrderId(command.orderId()).isPresent()) {

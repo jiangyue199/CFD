@@ -10,6 +10,14 @@ import com.cfd.domain.model.PositionStatus;
 import com.cfd.trading.domain.OpenPosition;
 import com.cfd.trading.domain.OpenPositionRepository;
 
+/**
+ * 基于MyBatis-Plus的持仓仓储实现。
+ *
+ * <p>使用MySQL数据库持久化持仓数据，实现{@link OpenPositionRepository}接口。
+ * 提供幂等保存、按订单ID查询、按用户ID查询及计数功能。</p>
+ *
+ * @author CFD Platform Team
+ */
 @Repository
 public class MybatisPlusOpenPositionRepository implements OpenPositionRepository {
 
