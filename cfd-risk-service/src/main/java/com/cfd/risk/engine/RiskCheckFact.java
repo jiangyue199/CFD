@@ -4,6 +4,11 @@ import java.math.BigDecimal;
 
 /**
  * 风控校验事实 - 扩展版本，包含所有事前风控所需字段。
+ *
+ * <p>作为 Drools 工作内存中的主事实对象，承载用户提交订单时的全部上下文信息，
+ * 供14条事前交易风控规则进行匹配和校验。</p>
+ *
+ * @author CFD Platform Team
  */
 public class RiskCheckFact {
 

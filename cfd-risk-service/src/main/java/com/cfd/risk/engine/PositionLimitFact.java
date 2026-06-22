@@ -4,6 +4,10 @@ import java.math.BigDecimal;
 
 /**
  * 持仓限额事实 - 包含持仓限额配置。
+ *
+ * <p>用于规则1.7（单一品种持仓限额校验）和规则1.8（全局风险敞口校验）。</p>
+ *
+ * @author CFD Platform Team
  */
 public class PositionLimitFact {
 

@@ -4,6 +4,10 @@ import java.math.BigDecimal;
 
 /**
  * 日交易统计事实 - 包含用户当日交易统计数据。
+ *
+ * <p>用于规则1.6（日交易限额校验），校验用户当日交易量和订单数量是否超出限制。</p>
+ *
+ * @author CFD Platform Team
  */
 public class DailyTradeStatsFact {
 

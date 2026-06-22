@@ -4,6 +4,10 @@ import java.time.LocalDateTime;
 
 /**
  * 新闻事件事实 - 包含活跃的新闻事件信息。
+ *
+ * <p>用于规则1.13（重要新闻事件期间禁止开仓），在重大新闻发布前后一段时间内禁止交易。</p>
+ *
+ * @author CFD Platform Team
  */
 public class NewsEventFact {
 

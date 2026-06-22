@@ -2,6 +2,11 @@ package com.cfd.risk.engine;
 
 /**
  * 用户状态事实 - 包含用户账户状态信息。
+ *
+ * <p>用于规则1.2（白名单校验）和规则1.4（账户状态冻结校验），
+ * 判断用户是否在白名单中或账户是否被冻结。</p>
+ *
+ * @author CFD Platform Team
  */
 public class UserStatusFact {
 

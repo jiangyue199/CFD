@@ -4,6 +4,11 @@ import java.math.BigDecimal;
 
 /**
  * 品种权限事实 - 包含品种交易权限配置。
+ *
+ * <p>用于规则1.3（品种交易权限校验）、规则1.5（最小/最大交易数量校验）、
+ * 规则1.9（杠杆倍数校验）和规则1.10（止损距离校验）。</p>
+ *
+ * @author CFD Platform Team
  */
 public class SymbolPermissionFact {
 
