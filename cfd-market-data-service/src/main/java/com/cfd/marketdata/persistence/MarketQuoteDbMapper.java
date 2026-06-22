@@ -1,8 +1,7 @@
 package com.cfd.marketdata.persistence;
 
-import org.apache.ibatis.annotations.Mapper;
-
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Mapper;
 
 /**
  * 市场报价数据库 Mapper 接口。

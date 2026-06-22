@@ -1,8 +1,7 @@
 package com.cfd.notification.persistence;
 
-import org.apache.ibatis.annotations.Mapper;
-
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Mapper;
 
 /**
  * 通知消息数据库 Mapper 接口。

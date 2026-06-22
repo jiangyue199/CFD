@@ -1,13 +1,5 @@
 package com.cfd.order.workflow;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import java.math.BigDecimal;
-import java.util.UUID;
-
-import org.junit.jupiter.api.Test;
-
 import com.cfd.clearing.domain.AccountBalance;
 import com.cfd.clearing.domain.AccountRepository;
 import com.cfd.clearing.domain.InMemoryAccountRepository;
@@ -20,13 +12,7 @@ import com.cfd.common.kafka.outbox.OutboxRelayService;
 import com.cfd.common.kafka.producer.InMemoryReliablePublisher;
 import com.cfd.common.kafka.test.InMemoryKafkaBroker;
 import com.cfd.domain.kafka.Topics;
-import com.cfd.domain.model.OrderOpenCommand;
-import com.cfd.domain.model.OrderOpenRequest;
-import com.cfd.domain.model.OrderResponse;
-import com.cfd.domain.model.OrderStatus;
-import com.cfd.domain.model.RiskCheckResponse;
-import com.cfd.domain.model.TradeOpenedEvent;
-import com.cfd.domain.model.TradeOpenedFeedback;
+import com.cfd.domain.model.*;
 import com.cfd.order.client.RiskFeignClient;
 import com.cfd.order.domain.InMemoryOrderRepository;
 import com.cfd.order.domain.OrderDomainService;
@@ -35,6 +21,13 @@ import com.cfd.trading.domain.InMemoryOpenPositionRepository;
 import com.cfd.trading.service.TradingApplicationService;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.Test;
+
+import java.math.BigDecimal;
+import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class CfdWorkflowIntegrationTest {
 

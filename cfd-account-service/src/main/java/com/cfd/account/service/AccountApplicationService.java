@@ -1,11 +1,10 @@
 package com.cfd.account.service;
 
-import java.math.BigDecimal;
-
-import org.springframework.stereotype.Service;
-
 import com.cfd.account.domain.AccountBalanceRepository;
 import com.cfd.account.domain.AccountCurrencyBalance;
+import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
 
 /**
  * 账户应用服务。

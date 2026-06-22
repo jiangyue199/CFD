@@ -1,8 +1,8 @@
 package com.cfd.order.domain;
 
-import java.time.Instant;
-
 import com.cfd.domain.model.OrderStatus;
+
+import java.time.Instant;
 
 /**
  * 订单聚合根。

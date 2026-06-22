@@ -1,13 +1,12 @@
 package com.cfd.marketdata.service;
 
-import java.math.BigDecimal;
-import java.time.Instant;
-
-import org.springframework.stereotype.Service;
-
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.cfd.marketdata.persistence.MarketQuoteDbMapper;
 import com.cfd.marketdata.persistence.MarketQuoteEntity;
+import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.time.Instant;
 
 /**
  * 行情数据服务。

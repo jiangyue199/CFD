@@ -1,14 +1,13 @@
 package com.cfd.trading.persistence;
 
-import java.util.List;
-import java.util.Optional;
-
-import org.springframework.stereotype.Repository;
-
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.cfd.domain.model.PositionStatus;
 import com.cfd.trading.domain.OpenPosition;
 import com.cfd.trading.domain.OpenPositionRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.Optional;
 
 /**
  * 基于MyBatis-Plus的持仓仓储实现。

@@ -1,8 +1,7 @@
 package com.cfd.clearing.persistence;
 
-import org.apache.ibatis.annotations.Mapper;
-
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Mapper;
 
 /**
  * 账户余额数据库Mapper接口。

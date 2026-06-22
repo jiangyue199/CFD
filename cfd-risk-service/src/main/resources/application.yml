@@ -17,3 +17,6 @@ spring:
 
 server:
   port: 8081
+
+drools:
+  rule-files: rules/risk-rules.drl

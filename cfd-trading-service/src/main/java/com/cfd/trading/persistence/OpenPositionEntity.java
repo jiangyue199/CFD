@@ -1,12 +1,12 @@
 package com.cfd.trading.persistence;
 
-import java.math.BigDecimal;
-import java.time.Instant;
-
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+
+import java.math.BigDecimal;
+import java.time.Instant;
 
 /**
  * 持仓数据库实体类。

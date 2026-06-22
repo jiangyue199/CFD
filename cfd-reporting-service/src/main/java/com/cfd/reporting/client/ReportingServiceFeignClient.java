@@ -1,10 +1,9 @@
 package com.cfd.reporting.client;
 
+import com.cfd.reporting.service.ReportingService;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-
-import com.cfd.reporting.service.ReportingService;
 
 /**
  * 报表服务 Feign 客户端接口。

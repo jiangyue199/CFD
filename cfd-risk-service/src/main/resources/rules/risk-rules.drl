@@ -1,0 +1,341 @@
+package com.cfd.risk.rules
+
+import com.cfd.risk.engine.RiskCheckFact
+import com.cfd.risk.engine.RiskCheckResult
+import com.cfd.risk.engine.RiskRuleFact
+import com.cfd.risk.engine.SymbolPermissionFact
+import com.cfd.risk.engine.DailyTradeStatsFact
+import com.cfd.risk.engine.PositionLimitFact
+import com.cfd.risk.engine.NewsEventFact
+import com.cfd.risk.engine.UserStatusFact
+import java.math.BigDecimal
+
+// ========================================
+// CFD 事前交易风控规则 - Drools DRL
+// ========================================
+// 规则优先级(salience)说明：
+//   500 - 白名单免检（最高优先级，匹配则跳过所有后续规则）
+//   400 - 用户状态检查（账户冻结）
+//   300 - 黑名单检查
+//   200 - 品种权限检查
+//   180 - 开仓方向限制
+//   160 - 订单数量校验
+//   140 - 日内交易限额
+//   120 - 净持仓限额
+//   100 - 杠杆限制
+//    80 - 保证金充足率
+//    60 - 价格偏离保护
+//    40 - 交易时段校验
+//    20 - 新闻事件限制
+//    10 - 最小止损距离
+// ========================================
+
+// ----------------------------------------
+// 规则1.2: 白名单免检 - 最高优先级
+// 用户在白名单内，直接通过并跳过后续规则
+// ----------------------------------------
+rule "Whitelist Pass"
+    salience 500
+    when
+        $result : RiskCheckResult()
+        $fact : RiskCheckFact()
+        $status : UserStatusFact(status == "WHITELIST")
+    then
+        $result.addReason("用户在白名单内，跳过所有风控校验");
+        $result.setAllowed(true);
+        drools.halt();
+end
+
+// ----------------------------------------
+// 规则1.1: 用户状态检查 - 账户冻结
+// 用户状态为FROZEN时拒绝交易
+// ----------------------------------------
+rule "User Status Frozen"
+    salience 400
+    when
+        $result : RiskCheckResult()
+        $fact : RiskCheckFact()
+        $status : UserStatusFact(status == "FROZEN")
+    then
+        $result.addReason("账户已冻结: " + ($status.getFrozenReason() != null ? $status.getFrozenReason() : "账户受限"));
+end
+
+// ----------------------------------------
+// 规则1.1: 黑名单检查
+// userId/IP/Device/Card在黑名单内时拒绝交易
+// ----------------------------------------
+rule "Blacklist User ID"
+    salience 350
+    when
+        $result : RiskCheckResult()
+        $fact : RiskCheckFact($userId : userId)
+        $rule : RiskRuleFact(ruleCode == "BLACKLIST_USER", symbol == $userId)
+    then
+        $result.addReason("用户ID在黑名单中");
+end
+
+rule "Blacklist IP"
+    salience 340
+    when
+        $result : RiskCheckResult()
+        $fact : RiskCheckFact($ip : ip != null)
+        $rule : RiskRuleFact(ruleCode == "BLACKLIST_IP", symbol == $ip)
+    then
+        $result.addReason("IP地址在黑名单中: " + $ip);
+end
+
+rule "Blacklist Device"
+    salience 330
+    when
+        $result : RiskCheckResult()
+        $fact : RiskCheckFact($device : deviceId != null)
+        $rule : RiskRuleFact(ruleCode == "BLACKLIST_DEVICE", symbol == $device)
+    then
+        $result.addReason("设备ID在黑名单中");
+end
+
+rule "Blacklist Card"
+    salience 320
+    when
+        $result : RiskCheckResult()
+        $fact : RiskCheckFact($card : cardNo != null)
+        $rule : RiskRuleFact(ruleCode == "BLACKLIST_CARD", symbol == $card)
+    then
+        $result.addReason("银行卡在黑名单中");
+end
+
+// ----------------------------------------
+// 规则1.3: 品种交易权限校验
+// 用户等级/区域不允许交易该品种时拒绝
+// ----------------------------------------
+rule "Symbol Permission Denied"
+    salience 200
+    when
+        $result : RiskCheckResult()
+        $fact : RiskCheckFact($symbol : symbol)
+        $perm : SymbolPermissionFact(symbol == $symbol, allowed == false)
+    then
+        $result.addReason("品种" + $symbol + "对当前用户等级/区域不可交易");
+end
+
+// ----------------------------------------
+// 规则1.4: 开仓方向限制
+// 某些品种只允许特定方向交易
+// ----------------------------------------
+rule "Direction Restriction"
+    salience 180
+    when
+        $result : RiskCheckResult()
+        $fact : RiskCheckFact($direction : direction != null, $symbol : symbol)
+        $perm : SymbolPermissionFact(symbol == $symbol, direction != "BOTH", direction != $direction)
+    then
+        $result.addReason("品种" + $symbol + "只允许" + $perm.getDirection() + "方向交易");
+end
+
+// ----------------------------------------
+// 规则1.4: 锁仓限制
+// 锁仓不被允许时拒绝
+// ----------------------------------------
+rule "Hedge Not Allowed"
+    salience 175
+    when
+        $result : RiskCheckResult()
+        $fact : RiskCheckFact(hedgeAllowed == true, $symbol : symbol)
+        $perm : SymbolPermissionFact(symbol == $symbol, hedgeAllowed == false)
+    then
+        $result.addReason("品种" + $symbol + "不允许锁仓交易");
+end
+
+// ----------------------------------------
+// 规则1.5: 订单数量范围校验
+// lotSize ∈ [minLot, maxLot] 且 lotSize % stepSize == 0
+// ----------------------------------------
+rule "Quantity Below Minimum"
+    salience 165
+    when
+        $result : RiskCheckResult()
+        $fact : RiskCheckFact($qty : quantity, $symbol : symbol)
+        $perm : SymbolPermissionFact(symbol == $symbol, $min : minLot)
+        eval($qty != null && $min != null && $qty.compareTo($min) < 0)
+    then
+        $result.addReason("数量" + $qty + "小于最小交易单位" + $min);
+end
+
+rule "Quantity Above Maximum"
+    salience 160
+    when
+        $result : RiskCheckResult()
+        $fact : RiskCheckFact($qty : quantity, $symbol : symbol)
+        $perm : SymbolPermissionFact(symbol == $symbol, $max : maxLot)
+        eval($qty != null && $max != null && $qty.compareTo($max) > 0)
+    then
+        $result.addReason("数量" + $qty + "超过最大交易单位" + $max);
+end
+
+rule "Quantity Not Multiple Of Step"
+    salience 155
+    when
+        $result : RiskCheckResult()
+        $fact : RiskCheckFact($qty : quantity, $symbol : symbol)
+        $perm : SymbolPermissionFact(symbol == $symbol, $step : stepLot)
+        eval($qty != null && $step != null && $qty.remainder($step).compareTo(BigDecimal.ZERO) != 0)
+    then
+        $result.addReason("数量" + $qty + "不是最小变动单位" + $step + "的整数倍");
+end
+
+// ----------------------------------------
+// 规则1.6: 日内开仓次数/量限额
+// 当日累计开仓手数或笔数超过阈值时拒绝
+// ----------------------------------------
+rule "Daily Lot Limit Exceeded"
+    salience 140
+    when
+        $result : RiskCheckResult()
+        $fact : RiskCheckFact($qty : quantity)
+        $stats : DailyTradeStatsFact($today : todayTotalLots, $max : dailyMaxLots)
+        eval($qty != null && $today != null && $max != null && $today.add($qty).compareTo($max) > 0)
+    then
+        $result.addReason("当日累计交易手数" + $today + "即将超过限额" + $max);
+end
+
+rule "Daily Order Count Limit Exceeded"
+    salience 135
+    when
+        $result : RiskCheckResult()
+        $stats : DailyTradeStatsFact($count : todayOrderCount, $max : dailyMaxOrders)
+        eval($count != null && $max != null && $count >= $max)
+    then
+        $result.addReason("当日订单笔数" + $count + "已超过限额" + $max);
+end
+
+// ----------------------------------------
+// 规则1.7: 净持仓限额（单品种）
+// 新开仓后净持仓绝对值超过限额时拒绝
+// ----------------------------------------
+rule "Per Symbol Position Limit"
+    salience 120
+    when
+        $result : RiskCheckResult()
+        $fact : RiskCheckFact($qty : quantity)
+        $limit : PositionLimitFact($posLimit : perSymbolLimit, $current : currentNetPosition)
+        eval($qty != null && $posLimit != null && $current != null)
+        eval($current.add($qty).abs().compareTo($posLimit) > 0)
+    then
+        $result.addReason("单品种净持仓即将超过限额" + $posLimit);
+end
+
+// ----------------------------------------
+// 规则1.8: 总净暴露限额
+// 跨品种同类净暴露超过全局限额时拒绝
+// ----------------------------------------
+rule "Global Net Exposure Limit"
+    salience 110
+    when
+        $result : RiskCheckResult()
+        $fact : RiskCheckFact($qty : quantity, $lev : leverage)
+        $limit : PositionLimitFact($exposure : globalNetExposure)
+        eval($qty != null && $lev != null && $exposure != null)
+        eval($qty.multiply($lev).compareTo($exposure) > 0)
+    then
+        $result.addReason("风险敞口" + $qty.multiply($lev) + "超过全局限额" + $exposure);
+end
+
+// ----------------------------------------
+// 规则1.9: 杠杆超限校验
+// 请求杠杆超过用户级别允许的最大杠杆时拒绝
+// ----------------------------------------
+rule "Leverage Exceeds User Level Limit"
+    salience 100
+    when
+        $result : RiskCheckResult()
+        $fact : RiskCheckFact($lev : leverage, $symbol : symbol)
+        $perm : SymbolPermissionFact(symbol == $symbol, $maxLev : maxLeverage)
+        eval($lev != null && $maxLev != null && $lev.compareTo($maxLev) > 0)
+    then
+        $result.addReason("杠杆" + $lev + "超过用户级别允许的最大杠杆" + $maxLev);
+end
+
+rule "Leverage Exceeds Global Limit"
+    salience 95
+    when
+        $result : RiskCheckResult()
+        $fact : RiskCheckFact($lev : leverage)
+        not(SymbolPermissionFact(maxLeverage != null))
+        $rule : RiskRuleFact(ruleCode == "MAX_LEVERAGE", symbol == "*", $maxLev : ruleValue)
+        eval($lev != null && $lev.compareTo($maxLev) > 0)
+    then
+        $result.addReason("杠杆" + $lev + "超过全局最大杠杆限制" + $maxLev);
+end
+
+// ----------------------------------------
+// 规则1.10: 保证金充足率预检
+// (Equity - 新开仓所需InitMargin) < 0 → 保证金不足
+// ----------------------------------------
+rule "Insufficient Margin"
+    salience 80
+    when
+        $result : RiskCheckResult()
+        $fact : RiskCheckFact($equity : equity, $margin : initMargin)
+        eval($equity != null && $margin != null && $equity.subtract($margin).compareTo(BigDecimal.ZERO) < 0)
+    then
+        $result.addReason("保证金不足: 权益" + $equity + ", 所需保证金" + $margin);
+end
+
+// ----------------------------------------
+// 规则1.11: 价格偏离/异常市价保护
+// 市价单进场价与最新报价偏差超过设定点数时拒绝
+// ----------------------------------------
+rule "Price Deviation Too Large"
+    salience 60
+    when
+        $result : RiskCheckResult()
+        $fact : RiskCheckFact(orderType == "MARKET", $current : currentPrice, $order : orderPrice)
+        eval($current != null && $order != null)
+        eval($order.subtract($current).abs().compareTo(new BigDecimal("0.01")) > 0)
+    then
+        $result.addReason("市价单价格偏离过大: 当前价" + $current + ", 订单价" + $order);
+end
+
+// ----------------------------------------
+// 规则1.12: 交易时段校验
+// 当前不在交易时段时拒绝
+// ----------------------------------------
+rule "Not In Trading Session"
+    salience 40
+    when
+        $result : RiskCheckResult()
+        $fact : RiskCheckFact($symbol : symbol)
+        $rule : RiskRuleFact(ruleCode == "TRADING_SESSION", symbol == $symbol, ruleValue == new BigDecimal("0"))
+    then
+        $result.addReason("品种" + $symbol + "当前不在交易时段内");
+end
+
+// ----------------------------------------
+// 规则1.13: 新闻/高波动时段限制
+// 重大数据发布前后N秒禁止新开仓
+// ----------------------------------------
+rule "News Event Lock Period"
+    salience 20
+    when
+        $result : RiskCheckResult()
+        $fact : RiskCheckFact()
+        $event : NewsEventFact(isLocked == true)
+    then
+        $result.addReason("当前处于重大新闻事件期间(" + $event.getDescription() + ")，禁止新开仓");
+end
+
+// ----------------------------------------
+// 规则1.14: 最小距离止损校验
+// 挂单价/SL距当前价小于最小止损距离时拒绝
+// ----------------------------------------
+rule "Stop Level Too Close"
+    salience 10
+    when
+        $result : RiskCheckResult()
+        $fact : RiskCheckFact($symbol : symbol, $stop : stopLevel, $current : currentPrice)
+        $perm : SymbolPermissionFact(symbol == $symbol, $minStop : minStopLevel)
+        eval($stop != null && $current != null && $minStop != null)
+        eval($stop.subtract($current).abs().compareTo($minStop) < 0)
+    then
+        $result.addReason("止损价位距当前价太近，最小止损距离为" + $minStop);
+end

@@ -1,11 +1,10 @@
 package com.cfd.trading.config;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-
 import com.cfd.common.kafka.outbox.OutboxRelayService;
 import com.cfd.common.kafka.outbox.persistence.MybatisPlusOutboxRepository;
 import com.cfd.common.kafka.producer.ReliableKafkaPublisher;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 /**
  * 交易模块配置类。

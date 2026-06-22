@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kmodule xmlns="http://www.drools.org/xsd/kmodule"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://www.drools.org/xsd/kmodule http://www.drools.org/xsd/kmodule.xsd">
+
+    <kbase name="riskRuleBase" packages="rules" default="true">
+        <ksession name="riskRuleSession" default="true"/>
+    </kbase>
+
+</kmodule>

@@ -1,16 +1,15 @@
 package com.cfd.trading.api;
 
-import java.util.List;
-
+import com.cfd.domain.model.OpenPositionResponse;
+import com.cfd.trading.service.OpenPositionQueryService;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
-import org.springframework.http.HttpStatus;
 
-import com.cfd.domain.model.OpenPositionResponse;
-import com.cfd.trading.service.OpenPositionQueryService;
+import java.util.List;
 
 /**
  * 交易持仓查询控制器。

@@ -1,11 +1,10 @@
 package com.cfd.user.service;
 
-import java.util.UUID;
-
-import org.springframework.stereotype.Service;
-
 import com.cfd.user.domain.UserProfile;
 import com.cfd.user.domain.UserRepository;
+import org.springframework.stereotype.Service;
+
+import java.util.UUID;
 
 /**
  * 用户应用服务。

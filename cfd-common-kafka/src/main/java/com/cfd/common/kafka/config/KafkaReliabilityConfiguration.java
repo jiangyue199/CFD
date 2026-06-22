@@ -1,9 +1,10 @@
 package com.cfd.common.kafka.config;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.time.Duration;
-
+import com.cfd.common.kafka.idempotent.ConsumerDedupStore;
+import com.cfd.common.kafka.idempotent.IdempotentConsumerExecutor;
+import com.cfd.common.kafka.idempotent.InMemoryAndExpiryConsumerDedupStore;
+import com.cfd.common.kafka.producer.ReliableKafkaPublisher;
+import com.cfd.common.kafka.producer.SpringKafkaReliablePublisher;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -13,11 +14,9 @@ import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 
-import com.cfd.common.kafka.idempotent.ConsumerDedupStore;
-import com.cfd.common.kafka.idempotent.IdempotentConsumerExecutor;
-import com.cfd.common.kafka.idempotent.InMemoryAndExpiryConsumerDedupStore;
-import com.cfd.common.kafka.producer.ReliableKafkaPublisher;
-import com.cfd.common.kafka.producer.SpringKafkaReliablePublisher;
+import java.time.Duration;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Kafka 可靠性自动配置类。

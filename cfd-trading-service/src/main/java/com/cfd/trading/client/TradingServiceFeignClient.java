@@ -1,12 +1,11 @@
 package com.cfd.trading.client;
 
-import java.util.List;
-
+import com.cfd.domain.model.OpenPositionResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-import com.cfd.domain.model.OpenPositionResponse;
+import java.util.List;
 
 /**
  * 交易服务Feign客户端接口。

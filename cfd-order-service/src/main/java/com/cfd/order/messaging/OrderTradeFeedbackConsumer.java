@@ -1,14 +1,13 @@
 package com.cfd.order.messaging;
 
-import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.stereotype.Component;
-
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.cfd.common.kafka.idempotent.IdempotentConsumerExecutor;
 import com.cfd.common.kafka.message.KafkaEnvelope;
 import com.cfd.domain.model.TradeOpenedFeedback;
 import com.cfd.order.service.OrderApplicationService;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.stereotype.Component;
 
 /**
  * 交易反馈 Kafka 消费者。

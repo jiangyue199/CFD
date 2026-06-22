@@ -1,14 +1,13 @@
 package com.cfd.trading.messaging;
 
-import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.stereotype.Component;
-
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.cfd.common.kafka.idempotent.IdempotentConsumerExecutor;
 import com.cfd.common.kafka.message.KafkaEnvelope;
 import com.cfd.domain.model.OrderOpenCommand;
 import com.cfd.trading.service.TradingApplicationService;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.stereotype.Component;
 
 /**
  * 开仓指令Kafka消费者。

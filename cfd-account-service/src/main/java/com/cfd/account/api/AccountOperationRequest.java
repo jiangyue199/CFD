@@ -1,10 +1,10 @@
 package com.cfd.account.api;
 
-import java.math.BigDecimal;
-
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+
+import java.math.BigDecimal;
 
 /**
  * 账户操作请求 DTO。

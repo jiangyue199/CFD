@@ -1,13 +1,13 @@
 package com.cfd.common.kafka.outbox.persistence;
 
-import java.time.Instant;
-
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cfd.common.kafka.outbox.OutboxMessage;
 import com.cfd.common.kafka.outbox.OutboxStatus;
+
+import java.time.Instant;
 
 /**
  * 发件箱消息数据库实体，映射到 {@code cfd_outbox_message} 表。

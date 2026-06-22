@@ -1,14 +1,13 @@
 package com.cfd.clearing.messaging;
 
-import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.stereotype.Component;
-
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.cfd.clearing.service.ClearingApplicationService;
 import com.cfd.common.kafka.idempotent.IdempotentConsumerExecutor;
 import com.cfd.common.kafka.message.KafkaEnvelope;
 import com.cfd.domain.model.TradeOpenedEvent;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.stereotype.Component;
 
 /**
  * 交易开仓事件Kafka消费者。

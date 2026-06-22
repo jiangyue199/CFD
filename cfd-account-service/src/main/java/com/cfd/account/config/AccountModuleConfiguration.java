@@ -1,10 +1,9 @@
 package com.cfd.account.config;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-
 import com.cfd.account.domain.AccountBalanceRepository;
 import com.cfd.account.persistence.MybatisPlusAccountBalanceRepository;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 /**
  * 账户模块 Spring 配置类。

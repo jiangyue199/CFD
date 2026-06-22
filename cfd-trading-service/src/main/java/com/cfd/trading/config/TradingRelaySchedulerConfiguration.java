@@ -1,10 +1,9 @@
 package com.cfd.trading.config;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-
 import com.cfd.common.kafka.outbox.OutboxRelayScheduler;
 import com.cfd.common.kafka.outbox.OutboxRelayService;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 /**
  * 交易服务Outbox中继调度器配置类。

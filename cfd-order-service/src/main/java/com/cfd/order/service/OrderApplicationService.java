@@ -1,28 +1,23 @@
 package com.cfd.order.service;
 
-import java.time.Instant;
-import java.util.Optional;
-import java.util.UUID;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.cfd.common.kafka.message.KafkaEnvelope;
 import com.cfd.common.kafka.outbox.OutboxMessage;
 import com.cfd.common.kafka.outbox.OutboxRepository;
 import com.cfd.domain.kafka.Topics;
-import com.cfd.domain.model.OrderOpenCommand;
-import com.cfd.domain.model.OrderOpenRequest;
-import com.cfd.domain.model.RiskCheckRequest;
-import com.cfd.domain.model.RiskCheckResponse;
-import com.cfd.domain.model.TradeOpenedFeedback;
+import com.cfd.domain.model.*;
 import com.cfd.order.client.RiskFeignClient;
 import com.cfd.order.domain.OrderAggregate;
 import com.cfd.order.domain.OrderDomainService;
 import com.cfd.order.domain.OrderMapper;
 import com.cfd.order.domain.OrderRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.Instant;
+import java.util.Optional;
+import java.util.UUID;
 
 /**
  * 订单应用服务。
@@ -81,7 +76,7 @@ public class OrderApplicationService {
         OrderAggregate order = orderDomainService.createPendingOrder(request.orderId(), request.userId(), request.symbol());
         orderRepository.saveIfAbsent(order);
 
-        RiskCheckResponse risk = riskFeignClient.checkOpenRisk(new RiskCheckRequest(
+        RiskCheckResponse risk = riskFeignClient.checkOpenRisk(RiskCheckRequest.minimal(
                 request.userId(), request.symbol(), request.quantity(), request.leverage()));
         if (!risk.allowed()) {
             orderDomainService.markRiskRejected(order);

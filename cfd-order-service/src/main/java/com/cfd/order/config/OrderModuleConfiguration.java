@@ -1,12 +1,11 @@
 package com.cfd.order.config;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-
 import com.cfd.common.kafka.outbox.OutboxRelayService;
 import com.cfd.common.kafka.outbox.persistence.MybatisPlusOutboxRepository;
 import com.cfd.common.kafka.producer.ReliableKafkaPublisher;
 import com.cfd.order.domain.OrderDomainService;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 /**
  * 订单模块 Bean 配置类。

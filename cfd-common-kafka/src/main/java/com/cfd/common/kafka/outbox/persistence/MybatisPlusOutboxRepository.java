@@ -1,14 +1,13 @@
 package com.cfd.common.kafka.outbox.persistence;
 
-import java.util.List;
-
-import org.springframework.stereotype.Repository;
-
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.cfd.common.kafka.outbox.OutboxMessage;
 import com.cfd.common.kafka.outbox.OutboxStatus;
 import com.cfd.common.kafka.outbox.RetryableOutboxRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 /**
  * 基于 MyBatis-Plus 的 MySQL 发件箱仓库实现。

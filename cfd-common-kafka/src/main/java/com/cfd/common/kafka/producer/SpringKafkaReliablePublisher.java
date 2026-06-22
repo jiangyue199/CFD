@@ -1,9 +1,9 @@
 package com.cfd.common.kafka.producer;
 
-import java.util.concurrent.TimeUnit;
-
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * 基于 Spring {@link KafkaTemplate} 的可靠消息发布器实现。

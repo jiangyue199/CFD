@@ -1,8 +1,7 @@
 package com.cfd.common.kafka.outbox.persistence;
 
-import org.apache.ibatis.annotations.Mapper;
-
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Mapper;
 
 /**
  * 发件箱消息 MyBatis-Plus Mapper 接口。

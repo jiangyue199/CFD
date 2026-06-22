@@ -1,13 +1,12 @@
 package com.cfd.marketdata.client;
 
+import com.cfd.marketdata.api.MarketQuoteRequest;
+import com.cfd.marketdata.service.MarketDataService;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-
-import com.cfd.marketdata.api.MarketQuoteRequest;
-import com.cfd.marketdata.service.MarketDataService;
 
 /**
  * 行情服务 Feign 客户端接口。

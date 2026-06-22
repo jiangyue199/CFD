@@ -1,24 +1,19 @@
 package com.cfd.risk.api;
 
-import java.math.BigDecimal;
-import java.util.Optional;
-
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.cfd.domain.model.RiskCheckRequest;
 import com.cfd.domain.model.RiskCheckResponse;
-import com.cfd.risk.persistence.RiskRuleDbMapper;
+import com.cfd.risk.engine.RiskEngineService;
 import com.cfd.risk.persistence.RiskRuleEntity;
+import com.cfd.risk.service.RiskRuleService;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * 风控检查控制器。
  *
- * <p>提供开仓风控校验接口，根据数据库中配置的风控规则（最大杠杆、最大数量）
- * 对订单请求进行合规性验证。</p>
+ * <p>提供开仓风控校验接口和风控规则管理接口。
+ * 风控校验通过 Drools 规则引擎执行，规则可动态增删改查。</p>
  *
  * @author CFD Platform Team
  */
@@ -26,81 +21,81 @@ import com.cfd.risk.persistence.RiskRuleEntity;
 @RequestMapping("/risk")
 public class RiskController {
 
-    private final RiskRuleDbMapper riskRuleDbMapper;
+    private final RiskEngineService riskEngineService;
+    private final RiskRuleService riskRuleService;
 
-    /**
-     * 构造风控控制器并初始化默认规则。
-     *
-     * @param riskRuleDbMapper 风控规则数据库 Mapper
-     */
-    public RiskController(RiskRuleDbMapper riskRuleDbMapper) {
-        this.riskRuleDbMapper = riskRuleDbMapper;
-        ensureDefaults();
+    public RiskController(RiskEngineService riskEngineService, RiskRuleService riskRuleService) {
+        this.riskEngineService = riskEngineService;
+        this.riskRuleService = riskRuleService;
     }
 
     /**
      * 开仓风控校验接口。
      *
-     * <p>校验请求中的杠杆倍数和数量是否超过风控阈值。</p>
+     * <p>通过 Drools 规则引擎执行风控校验，支持杠杆、数量、风险敞口、黑名单等多维规则。</p>
      *
      * @param request 风控校验请求
      * @return 风控校验结果，包含是否通过及原因
      */
     @PostMapping("/open/check")
     public RiskCheckResponse checkOpen(@RequestBody RiskCheckRequest request) {
-        BigDecimal maxLeverage = decimalRule("MAX_LEVERAGE", "50");
-        BigDecimal maxQuantity = decimalRule("MAX_QUANTITY", "1000");
-        if (request.leverage().compareTo(maxLeverage) > 0) {
-            return new RiskCheckResponse(false, "Leverage exceeds threshold");
-        }
-        if (request.quantity().compareTo(maxQuantity) > 0) {
-            return new RiskCheckResponse(false, "Quantity exceeds threshold");
-        }
-        return new RiskCheckResponse(true, "PASS");
+        return riskEngineService.evaluate(request);
     }
 
     /**
-     * 从数据库获取指定规则的数值，若不存在则返回默认值。
+     * 获取所有风控规则。
      *
-     * @param ruleCode     规则编码
-     * @param defaultValue 默认值
-     * @return 规则数值
+     * @return 规则列表
      */
-    private BigDecimal decimalRule(String ruleCode, String defaultValue) {
-        RiskRuleEntity entity = riskRuleDbMapper.selectOne(new LambdaQueryWrapper<RiskRuleEntity>()
-                .eq(RiskRuleEntity::getRuleCode, ruleCode)
-                .last("limit 1"));
-        if (entity == null) {
-            return new BigDecimal(defaultValue);
-        }
-        return entity.getRuleValue();
+    @GetMapping("/rules")
+    public List<RiskRuleEntity> listRules() {
+        return riskRuleService.getAllRules();
     }
 
     /**
-     * 确保数据库中存在默认风控规则。
-     */
-    private void ensureDefaults() {
-        ensurePresent("MAX_LEVERAGE", "50");
-        ensurePresent("MAX_QUANTITY", "1000");
-    }
-
-    /**
-     * 若指定规则不存在，则插入默认值。
+     * 获取指定规则详情。
      *
-     * @param ruleCode  规则编码
-     * @param ruleValue 规则值
+     * @param id 规则ID
+     * @return 规则实体
      */
-    private void ensurePresent(String ruleCode, String ruleValue) {
-        Optional<RiskRuleEntity> existing = Optional.ofNullable(riskRuleDbMapper.selectOne(
-                new LambdaQueryWrapper<RiskRuleEntity>()
-                        .eq(RiskRuleEntity::getRuleCode, ruleCode)
-                        .last("limit 1")));
-        if (existing.isPresent()) {
-            return;
-        }
-        RiskRuleEntity entity = new RiskRuleEntity();
-        entity.setRuleCode(ruleCode);
-        entity.setRuleValue(new BigDecimal(ruleValue));
-        riskRuleDbMapper.insert(entity);
+    @GetMapping("/rules/{id}")
+    public RiskRuleEntity getRule(@PathVariable Long id) {
+        return riskRuleService.getRule(id);
+    }
+
+    /**
+     * 新增风控规则。
+     *
+     * @param entity 规则实体
+     * @return 新增后的规则实体
+     */
+    @PostMapping("/rules")
+    public RiskRuleEntity addRule(@RequestBody RiskRuleEntity entity) {
+        riskRuleService.addRule(entity);
+        return entity;
+    }
+
+    /**
+     * 更新风控规则。
+     *
+     * @param id     规则ID
+     * @param entity 规则实体
+     * @return 更新后的规则实体
+     */
+    @PutMapping("/rules/{id}")
+    public RiskRuleEntity updateRule(@PathVariable Long id, @RequestBody RiskRuleEntity entity) {
+        entity.setId(id);
+        riskRuleService.updateRule(entity);
+        return entity;
+    }
+
+    /**
+     * 删除风控规则。
+     *
+     * @param id 规则ID
+     */
+    @DeleteMapping("/rules/{id}")
+    public void deleteRule(@PathVariable Long id) {
+        riskRuleService.deleteRule(id);
     }
 }

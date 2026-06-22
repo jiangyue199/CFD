@@ -1,12 +1,11 @@
 package com.cfd.clearing.api;
 
+import com.cfd.clearing.service.ClearingApplicationService;
+import com.cfd.domain.model.AccountBalanceResponse;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.cfd.clearing.service.ClearingApplicationService;
-import com.cfd.domain.model.AccountBalanceResponse;
 
 /**
  * 清算账户查询控制器。

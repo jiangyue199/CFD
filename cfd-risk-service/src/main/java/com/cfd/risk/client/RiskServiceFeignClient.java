@@ -1,11 +1,10 @@
 package com.cfd.risk.client;
 
+import com.cfd.domain.model.RiskCheckRequest;
+import com.cfd.domain.model.RiskCheckResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-
-import com.cfd.domain.model.RiskCheckRequest;
-import com.cfd.domain.model.RiskCheckResponse;
 
 /**
  * 风控服务 Feign 客户端接口。

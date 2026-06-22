@@ -1,9 +1,9 @@
 package com.cfd.common.kafka.topic;
 
-import java.util.Collection;
-
 import org.apache.kafka.clients.admin.NewTopic;
 import org.springframework.kafka.core.KafkaAdmin;
+
+import java.util.Collection;
 
 /**
  * 基于 Spring {@link KafkaAdmin} 的 Topic 管理服务实现。

@@ -1,11 +1,10 @@
 package com.cfd.reporting.api;
 
+import com.cfd.reporting.service.ReportingService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.cfd.reporting.service.ReportingService;
 
 /**
  * 报表 REST 控制器。

@@ -1,10 +1,10 @@
 package com.cfd.marketdata.api;
 
-import java.math.BigDecimal;
-
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+
+import java.math.BigDecimal;
 
 /**
  * 市场报价请求 DTO。

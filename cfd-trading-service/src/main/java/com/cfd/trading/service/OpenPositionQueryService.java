@@ -1,13 +1,12 @@
 package com.cfd.trading.service;
 
-import java.util.List;
-import java.util.Optional;
-
-import org.springframework.stereotype.Service;
-
 import com.cfd.domain.model.OpenPositionResponse;
 import com.cfd.trading.domain.OpenPositionMapper;
 import com.cfd.trading.domain.OpenPositionRepository;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
 
 /**
  * 持仓查询服务。

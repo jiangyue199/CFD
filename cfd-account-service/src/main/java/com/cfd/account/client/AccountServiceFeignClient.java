@@ -1,13 +1,12 @@
 package com.cfd.account.client;
 
+import com.cfd.account.api.AccountBalanceResponse;
+import com.cfd.account.api.AccountOperationRequest;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-
-import com.cfd.account.api.AccountBalanceResponse;
-import com.cfd.account.api.AccountOperationRequest;
 
 /**
  * 账户服务 Feign 客户端接口。

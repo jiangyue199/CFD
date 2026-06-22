@@ -1,9 +1,9 @@
 package com.cfd.trading.domain;
 
+import com.cfd.domain.model.PositionStatus;
+
 import java.math.BigDecimal;
 import java.time.Instant;
-
-import com.cfd.domain.model.PositionStatus;
 
 /**
  * 持仓聚合根。

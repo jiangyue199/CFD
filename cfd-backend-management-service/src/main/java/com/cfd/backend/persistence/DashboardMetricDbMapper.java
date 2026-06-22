@@ -1,8 +1,7 @@
 package com.cfd.backend.persistence;
 
-import org.apache.ibatis.annotations.Mapper;
-
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Mapper;
 
 /**
  * 仪表盘指标数据库 Mapper 接口。

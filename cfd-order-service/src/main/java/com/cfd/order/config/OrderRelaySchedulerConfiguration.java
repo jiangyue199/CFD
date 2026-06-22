@@ -1,10 +1,9 @@
 package com.cfd.order.config;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-
 import com.cfd.common.kafka.outbox.OutboxRelayScheduler;
 import com.cfd.common.kafka.outbox.OutboxRelayService;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 /**
  * Outbox 中继调度器配置类。

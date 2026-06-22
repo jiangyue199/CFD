@@ -1,15 +1,14 @@
 package com.cfd.notification.client;
 
-import java.util.List;
-
+import com.cfd.notification.api.NotificationRequest;
+import com.cfd.notification.service.NotificationService;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import com.cfd.notification.api.NotificationRequest;
-import com.cfd.notification.service.NotificationService;
+import java.util.List;
 
 /**
  * 通知服务 Feign 客户端接口。

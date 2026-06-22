@@ -1,14 +1,13 @@
 package com.cfd.configservice.client;
 
-import java.util.Map;
-
+import com.cfd.configservice.api.ConfigUpdateRequest;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import com.cfd.configservice.api.ConfigUpdateRequest;
+import java.util.Map;
 
 /**
  * 配置服务 Feign 客户端接口。

@@ -1,10 +1,10 @@
 package com.cfd.order.api;
 
-import java.math.BigDecimal;
-
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+
+import java.math.BigDecimal;
 
 /**
  * 开仓订单 HTTP 请求 DTO。

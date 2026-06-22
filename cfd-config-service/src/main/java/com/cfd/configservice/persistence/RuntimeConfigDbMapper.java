@@ -1,8 +1,7 @@
 package com.cfd.configservice.persistence;
 
-import org.apache.ibatis.annotations.Mapper;
-
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Mapper;
 
 /**
  * 运行时配置数据库 Mapper 接口。

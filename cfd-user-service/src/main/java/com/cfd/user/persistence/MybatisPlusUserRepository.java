@@ -1,12 +1,11 @@
 package com.cfd.user.persistence;
 
-import java.util.Optional;
-
-import org.springframework.stereotype.Repository;
-
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.cfd.user.domain.UserProfile;
 import com.cfd.user.domain.UserRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.Optional;
 
 /**
  * 基于 MyBatis-Plus 的用户仓储实现。

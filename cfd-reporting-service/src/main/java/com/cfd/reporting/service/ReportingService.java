@@ -1,12 +1,11 @@
 package com.cfd.reporting.service;
 
-import java.time.Instant;
-
-import org.springframework.stereotype.Service;
-
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.cfd.reporting.persistence.DailyReportDbMapper;
 import com.cfd.reporting.persistence.DailyReportEntity;
+import org.springframework.stereotype.Service;
+
+import java.time.Instant;
 
 /**
  * 报表服务。
