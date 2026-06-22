@@ -10,6 +10,18 @@ import java.time.LocalDateTime;
 
 /**
  * 保证金配置实体类。
+ *
+ * <p>对应数据库 margin_config 表，定义不同用户等级的保证金相关配置：
+ * <ul>
+ *   <li>marginCallLevel: 保证金预警线（规则2.2）</li>
+ *   <li>stopOutLevel: 强平线（规则2.3）</li>
+ *   <li>negativeBalanceProtection: 负余额保护（规则2.4）</li>
+ *   <li>concentrationRatio: 品种集中度阈值（规则2.5）</li>
+ *   <li>floatingLossRatio: 浮动亏损比例阈值（规则2.6）</li>
+ * </ul>
+ * </p>
+ *
+ * @author CFD Platform Team
  */
 @TableName("margin_config")
 public class MarginConfigEntity {

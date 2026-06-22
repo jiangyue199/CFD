@@ -9,6 +9,11 @@ import java.time.LocalDateTime;
 
 /**
  * 新闻事件实体类。
+ *
+ * <p>对应数据库 news_event 表，记录重大新闻事件（规则1.13）。
+ * 在事件前后一段时间内禁止新开仓，防止高波动期间的异常交易。</p>
+ *
+ * @author CFD Platform Team
  */
 @TableName("news_event")
 public class NewsEventEntity {

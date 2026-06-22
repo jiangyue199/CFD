@@ -11,6 +11,11 @@ import java.time.LocalDateTime;
 
 /**
  * 用户浮动亏损统计实体类。
+ *
+ * <p>对应数据库 user_floating_loss 表，记录用户当日浮动亏损统计（规则2.6）。
+ * 当当日浮动亏损比例超过阈值时触发告警，且每个用户每天仅触发一次。</p>
+ *
+ * @author CFD Platform Team
  */
 @TableName("user_floating_loss")
 public class UserFloatingLossEntity {

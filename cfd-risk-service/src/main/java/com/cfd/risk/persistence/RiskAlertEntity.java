@@ -10,6 +10,16 @@ import java.time.LocalDateTime;
 
 /**
  * 风险告警记录实体类。
+ *
+ * <p>对应数据库 risk_alert 表，记录账户风控告警信息：
+ * <ul>
+ *   <li>alertType: 告警类型（MARGIN_CALL, STOP_OUT, NEGATIVE_BALANCE等）</li>
+ *   <li>alertLevel: 告警级别（INFO, WARNING, CRITICAL）</li>
+ *   <li>handled: 是否已处理</li>
+ * </ul>
+ * </p>
+ *
+ * @author CFD Platform Team
  */
 @TableName("risk_alert")
 public class RiskAlertEntity {

@@ -8,6 +8,11 @@ import java.time.LocalDateTime;
 
 /**
  * 用户状态实体类。
+ *
+ * <p>对应数据库 user_status 表，存储用户账户状态信息。
+ * 支持状态包括：ACTIVE(正常)、FROZEN(冻结)、WHITELIST(白名单)。</p>
+ *
+ * @author CFD Platform Team
  */
 @TableName("user_status")
 public class UserStatusEntity {

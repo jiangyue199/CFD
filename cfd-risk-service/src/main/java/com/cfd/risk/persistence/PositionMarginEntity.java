@@ -10,6 +10,11 @@ import java.time.LocalDateTime;
 
 /**
  * 持仓保证金信息实体类。
+ *
+ * <p>对应数据库 position_margin 表，记录每笔持仓的保证金信息。
+ * 支持状态包括：OPEN(开仓)、FORCE_CLOSED(强平)、CLOSED(平仓)。</p>
+ *
+ * @author CFD Platform Team
  */
 @TableName("position_margin")
 public class PositionMarginEntity {

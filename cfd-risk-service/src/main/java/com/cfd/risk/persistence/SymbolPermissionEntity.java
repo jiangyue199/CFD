@@ -10,6 +10,11 @@ import java.time.LocalDateTime;
 
 /**
  * 品种权限实体类。
+ *
+ * <p>对应数据库 symbol_permission 表，定义不同用户等级和区域对各交易品种的交易权限。
+ * 支持方向限制(BUY/SELL/BOTH)、锁仓限制、最小/最大交易数量、杠杆限制等。</p>
+ *
+ * @author CFD Platform Team
  */
 @TableName("symbol_permission")
 public class SymbolPermissionEntity {

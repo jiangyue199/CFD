@@ -10,6 +10,11 @@ import java.time.LocalTime;
 
 /**
  * 交易时段实体类。
+ *
+ * <p>对应数据库 trading_session 表，定义各品种的交易时段限制（规则1.12）。
+ * dayOfWeek 为星期几（1-7），支持按星期配置不同的交易时段。</p>
+ *
+ * @author CFD Platform Team
  */
 @TableName("trading_session")
 public class TradingSessionEntity {

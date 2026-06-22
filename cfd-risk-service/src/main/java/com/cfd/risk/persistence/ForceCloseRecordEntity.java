@@ -10,6 +10,16 @@ import java.time.LocalDateTime;
 
 /**
  * 强平记录实体类。
+ *
+ * <p>对应数据库 force_close_record 表，记录强制平仓操作记录：
+ * <ul>
+ *   <li>closeReason: 强平原因（STOP_OUT, NEGATIVE_BALANCE等）</li>
+ *   <li>realizedPnl: 已实现盈亏</li>
+ *   <li>marginBefore/marginAfter: 强平前后保证金变化</li>
+ * </ul>
+ * </p>
+ *
+ * @author CFD Platform Team
  */
 @TableName("force_close_record")
 public class ForceCloseRecordEntity {

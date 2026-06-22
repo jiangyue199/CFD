@@ -11,6 +11,11 @@ import java.time.LocalDateTime;
 
 /**
  * 用户日交易统计实体类。
+ *
+ * <p>对应数据库 user_daily_trade 表，记录用户每日交易统计数据，
+ * 用于日交易限额校验（规则1.6）。</p>
+ *
+ * @author CFD Platform Team
  */
 @TableName("user_daily_trade")
 public class UserDailyTradeEntity {

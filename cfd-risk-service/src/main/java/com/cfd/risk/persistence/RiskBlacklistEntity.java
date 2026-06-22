@@ -9,6 +9,11 @@ import java.time.LocalDateTime;
 
 /**
  * 黑白名单实体类。
+ *
+ * <p>对应数据库 risk_blacklist 表，存储用户/IP/设备/银行卡的黑白名单信息。
+ * 支持自动过期机制，expires_at 为 null 表示永久有效。</p>
+ *
+ * @author CFD Platform Team
  */
 @TableName("risk_blacklist")
 public class RiskBlacklistEntity {

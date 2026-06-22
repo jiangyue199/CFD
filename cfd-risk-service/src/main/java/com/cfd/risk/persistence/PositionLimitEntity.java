@@ -10,6 +10,11 @@ import java.time.LocalDateTime;
 
 /**
  * 持仓限额实体类。
+ *
+ * <p>对应数据库 position_limit 表，定义各品种的持仓限额和全局风险敞口限制。
+ * perSymbolLimit 为单一品种净持仓限额，globalNetExposure 为全局风险敞口限额。</p>
+ *
+ * @author CFD Platform Team
  */
 @TableName("position_limit")
 public class PositionLimitEntity {

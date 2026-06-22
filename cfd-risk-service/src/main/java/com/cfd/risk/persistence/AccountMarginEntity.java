@@ -10,6 +10,19 @@ import java.time.LocalDateTime;
 
 /**
  * 账户保证金快照实体类。
+ *
+ * <p>对应数据库 account_margin 表，存储用户账户的实时保证金快照：
+ * <ul>
+ *   <li>balance: 账户余额</li>
+ *   <li>equity: 账户权益（余额+浮动盈亏）</li>
+ *   <li>usedMargin: 已用保证金</li>
+ *   <li>freeMargin: 可用保证金</li>
+ *   <li>marginLevel: 保证金水平(%)</li>
+ *   <li>floatingPnl: 浮动盈亏</li>
+ * </ul>
+ * </p>
+ *
+ * @author CFD Platform Team
  */
 @TableName("account_margin")
 public class AccountMarginEntity {

@@ -10,6 +10,11 @@ import java.time.LocalDateTime;
 
 /**
  * 日交易限额实体类。
+ *
+ * <p>对应数据库 daily_trade_limit 表，定义用户每日交易限额。
+ * symbol 为 "*" 表示全局限额，否则为品种特定限额。</p>
+ *
+ * @author CFD Platform Team
  */
 @TableName("daily_trade_limit")
 public class DailyTradeLimitEntity {
